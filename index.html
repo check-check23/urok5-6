@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мистический Волшебный Шар — Рандомайзер Тем</title>
+    <!-- Подключаем Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts для сказочной атмосферы -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+            transition: background 1s ease-in-out;
+        }
+        
+        .cinzel-font {
+            font-family: 'Cinzel Decorative', cursive;
+        }
+
+        /* Эффект свечения и пульсации для шара */
+        @keyframes orbGlow {
+            0%, 100% {
+                box-shadow: 0 0 40px rgba(139, 92, 246, 0.6), inset 0 0 50px rgba(255, 255, 255, 0.4), 0 0 120px rgba(99, 102, 241, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 70px rgba(236, 72, 153, 0.8), inset 0 0 70px rgba(255, 255, 255, 0.6), 0 0 160px rgba(217, 70, 239, 0.5);
+                transform: scale(1.02);
+            }
+        }
+
+        .magic-orb {
+            animation: orbGlow 4s infinite ease-in-out;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.8) 0%, rgba(147, 51, 234, 0.6) 35%, rgba(49, 46, 129, 0.9) 80%, rgba(15, 23, 42, 1) 100%);
+        }
+
+        /* Вращение туманности внутри шара */
+        @keyframes swirl {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .orb-swirl {
+            animation: swirl 12s infinite linear;
+        }
+
+        /* Звезды и частицы на фоне */
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); filter: drop-shadow(0 0 6px white); }
+        }
+
+        /* Эффект поиска (быстрое мигание шара) */
+        .searching {
+            animation: searchPulse 0.15s infinite alternate !important;
+        }
+
+        @keyframes searchPulse {
+            0% { transform: scale(0.97) rotate(-2deg); filter: hue-rotate(0deg); }
+            100% { transform: scale(1.05) rotate(2deg); filter: hue-rotate(360deg); }
+        }
+
+        /* Стеклянный морфизм */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body id="body-bg" class="min-h-screen bg-slate-950 text-white relative flex flex-col justify-between selection:bg-purple-500 selection:text-white">
+
+    <!-- Фоновые мерцающие звезды (генерируются через JS) -->
+    <div id="stars-container" class="absolute inset-0 overflow-hidden pointer-events-none z-0"></div>
+
+    <!-- Шапка страницы -->
+    <header class="relative z-10 w-full py-6 px-4 md:px-10 flex flex-col items-center justify-center text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-card text-xs md:text-sm font-medium tracking-wide mb-3 shadow-lg">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-400 animate-spin" style="animation-duration: 6s;"></i>
+            <span>Интерактивный Оракул Знаний</span>
+        </div>
+        <h1 class="cinzel-font text-3xl md:text-5xl font-bold tracking-wider bg-gradient-to-r from-purple-300 via-pink-300 to-indigo-300 bg-clip-text text-transparent drop-shadow-md">
+            Магический Шар Проектов
+        </h1>
+        <p class="text-slate-300 text-sm md:text-base mt-2 max-w-xl font-light">
+            Прикоснитесь к тайне и узнайте свою тему!
+        </p>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="relative z-10 flex-1 flex flex-col items-center justify-center px-4 py-4 w-full max-w-5xl mx-auto">
+        
+        <!-- Секция с Волшебным Шаром (увеличен размер) -->
+        <div id="orb-section" class="flex flex-col items-center justify-center transition-all duration-700 my-2">
+            <div class="relative group cursor-pointer" onclick="startRandomizer()">
+                <!-- Ореол свечения -->
+                <div class="absolute -inset-8 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600 opacity-50 blur-3xl group-hover:opacity-80 transition duration-700"></div>
+                
+                <!-- Сам Шар (увеличенные размеры: 320px на моб, 420px на десктопе) -->
+                <div id="magic-orb" class="magic-orb relative w-80 h-80 md:w-[420px] md:h-[420px] rounded-full flex items-center justify-center text-center p-8 md:p-12 shadow-2xl transition-all duration-500 overflow-hidden border-2 border-white/20 select-none">
+                    <!-- Внутреннее переливание -->
+                    <div class="orb-swirl absolute inset-0 bg-gradient-to-tr from-indigo-900/60 via-purple-800/40 to-pink-500/30 rounded-full pointer-events-none"></div>
+                    
+                    <!-- Блик на стекле шара -->
+                    <div class="absolute top-10 left-14 w-24 h-12 bg-white/30 rounded-full blur-[2px] rotate-[-30deg] pointer-events-none"></div>
+                    
+                    <!-- Текст на шаре -->
+                    <div id="orb-text-container" class="relative z-10 flex flex-col items-center justify-center px-2 md:px-6">
+                        <i id="orb-icon" class="fa-solid fa-hand-pointer text-3xl md:text-5xl text-purple-200 mb-4 animate-bounce"></i>
+                        <span id="orb-text" class="cinzel-font text-lg md:text-2xl font-bold text-white tracking-wide drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] leading-snug">
+                            Нажми на меня
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Подвал -->
+    <footer class="relative z-10 w-full py-6 text-center text-slate-400 text-xs md:text-sm border-t border-white/5 mt-10">
+        <p>Магический Рандомайзер Тем &bull; Нажми на шар, чтобы узнать свою тему</p>
+    </footer>
+
+    <!-- Скрипт логики и данных -->
+    <script>
+        // База данных из 10 тем с полными названиями (включая пояснения в скобках)
+        const themesData = [
+            {
+                id: 1,
+                name: "Домашние животные (минимум 3 животных — фото + 3 факта или больше)",
+                themeColor: "from-amber-950/70 via-orange-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(255, 237, 213, 0.8) 0%, rgba(217, 119, 6, 0.6) 35%, rgba(120, 53, 15, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-cat"
+            },
+            {
+                id: 2,
+                name: "Как гусеница превращается в бабочку (стадии с картинками — фото + 3 факта или больше)",
+                themeColor: "from-emerald-950/70 via-teal-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(209, 250, 229, 0.8) 0%, rgba(16, 185, 129, 0.6) 35%, rgba(6, 78, 59, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-bug"
+            },
+            {
+                id: 3,
+                name: "Животные, которые живут в океане (кит, осьминог, акула — фото + 3 факта или больше)",
+                themeColor: "from-blue-950/70 via-cyan-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(207, 250, 254, 0.8) 0%, rgba(6, 182, 212, 0.6) 35%, rgba(22, 78, 99, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-water"
+            },
+            {
+                id: 4,
+                name: "Планеты Солнечной системы (по одной картинке на планету, + 3 факта или больше)",
+                themeColor: "from-indigo-950/70 via-purple-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(224, 231, 255, 0.8) 0%, rgba(99, 102, 241, 0.6) 35%, rgba(49, 46, 129, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-globe"
+            },
+            {
+                id: 5,
+                name: "Моя любимая книга или мультфильм/фильм (обложка, персонажи, краткий пересказ)",
+                themeColor: "from-yellow-950/70 via-amber-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(254, 243, 199, 0.8) 0%, rgba(245, 158, 11, 0.6) 35%, rgba(120, 53, 15, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-film"
+            },
+            {
+                id: 6,
+                name: "Почему идет дождь? (круговорот воды в картинках)",
+                themeColor: "from-sky-950/70 via-blue-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(224, 242, 254, 0.8) 0%, rgba(14, 165, 233, 0.6) 35%, rgba(7, 89, 133, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-cloud-rain"
+            },
+            {
+                id: 7,
+                name: "Праздник, который я люблю (минимум 3 праздника — фото + 3 факта или больше)",
+                themeColor: "from-rose-950/70 via-red-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(255, 228, 230, 0.8) 0%, rgba(244, 63, 94, 0.6) 35%, rgba(136, 19, 55, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-cake-candles"
+            },
+            {
+                id: 8,
+                name: "Животные Африки (лев, слон, жираф, минимум 3 животных — фото + 3 факта или больше)",
+                themeColor: "from-orange-950/70 via-amber-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(254, 215, 170, 0.8) 0%, rgba(234, 88, 12, 0.6) 35%, rgba(124, 45, 18, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-paw"
+            },
+            {
+                id: 9,
+                name: "Времена года: что происходит с деревьями? (круговорот сезонов года в картинках)",
+                themeColor: "from-teal-950/70 via-emerald-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(167, 243, 208, 0.8) 0%, rgba(5, 150, 105, 0.6) 35%, rgba(6, 78, 59, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-seedling"
+            },
+            {
+                id: 10,
+                name: "Мои любимые игры (минимум 3 игры — фото + 3 факта или больше)",
+                themeColor: "from-violet-950/70 via-purple-950/80 to-slate-950",
+                orbBg: "radial-gradient(circle at 30% 30%, rgba(233, 213, 255, 0.8) 0%, rgba(147, 51, 234, 0.6) 35%, rgba(88, 28, 135, 0.9) 80%, rgba(15, 23, 42, 1) 100%)",
+                icon: "fa-gamepad"
+            }
+        ];
+
+        let isSearching = false;
+
+        // Создаем мерцающие звезды на заднем плане
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const count = 70;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.animationDelay = `${Math.random() * 3}s`;
+                container.appendChild(star);
+            }
+        }
+
+        // Запуск рандомайзера при клике на сам шар
+        function startRandomizer() {
+            if (isSearching) return;
+            isSearching = true;
+
+            const orb = document.getElementById('magic-orb');
+            const orbText = document.getElementById('orb-text');
+            const orbIcon = document.getElementById('orb-icon');
+
+            // Добавляем класс поиска (интенсивное мигание и переливание)
+            orb.classList.add('searching');
+            orbIcon.className = "fa-solid fa-spinner fa-spin text-3xl md:text-5xl text-purple-200 mb-4";
+
+            // Имитируем магический поиск: перебираем темы в шаре
+            let counter = 0;
+            const searchInterval = setInterval(() => {
+                const randomTheme = themesData[Math.floor(Math.random() * themesData.length)];
+                orbText.textContent = randomTheme.name;
+                counter++;
+            }, 100);
+
+            // Через 2.5 секунды выбираем окончательную тему
+            setTimeout(() => {
+                clearInterval(searchInterval);
+                orb.classList.remove('searching');
+
+                // Выбираем случайную тему
+                const selectedTheme = themesData[Math.floor(Math.random() * themesData.length)];
+                
+                // Устанавливаем текст и иконку на шаре
+                orbText.textContent = selectedTheme.name;
+                orbIcon.className = `fa-solid ${selectedTheme.icon} text-3xl md:text-5xl text-purple-200 mb-4`;
+
+                // Меняем стиль шара и фон страницы под выбранную тему
+                applyTheme(selectedTheme);
+
+                isSearching = false;
+            }, 2500);
+        }
+
+        // Применение цветовой гаммы темы
+        function applyTheme(theme) {
+            const bodyBg = document.getElementById('body-bg');
+            const magicOrb = document.getElementById('magic-orb');
+
+            // Плавная смена фона body
+            bodyBg.className = `min-h-screen bg-gradient-to-br ${theme.themeColor} text-white relative flex flex-col justify-between selection:bg-purple-500 selection:text-white transition-all duration-1000`;
+
+            // Установка цвета для волшебного шара
+            magicOrb.style.background = theme.orbBg;
+        }
+
+        // Инициализация звезд при загрузке страницы
+        window.onload = function() {
+            createStars();
+        }
+    </script>
+</body>
+</html>
